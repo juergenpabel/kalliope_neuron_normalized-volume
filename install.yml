@@ -1,0 +1,14 @@
+---
+- name: normalizedvolume
+  hosts: localhost
+  gather_facts: no
+  connection: local
+
+  tasks:
+    - name: "Install pyalsaaudio"
+      pip:
+        name: pyalsaaudio
+    - name: "Install numpy"
+      pip:
+        name: numpy
+

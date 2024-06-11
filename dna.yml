@@ -1,0 +1,10 @@
+---
+name: "normalizedvolume"
+type: "neuron"
+author: "juergenpabel"
+
+kalliope_supported_version:
+  - 0.7
+tags:
+  - "volume"
+  - "alsa"
