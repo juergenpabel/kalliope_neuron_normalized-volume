@@ -12,7 +12,7 @@ class SoundManager(object):
 
     m = {}
     # Master & PCM as per kalliope.neurons.volume; Speaker & Playback as per seeed-voicecard driver
-    for mixer_name in ['Master', 'PCM', 'Speaker', 'Playback']:
+    for mixer_name in ['Master', 'PCM', 'Playback', 'Speaker']:
         if 'default' not in m:
             try:
                 m[mixer_name] = Mixer(mixer_name)
