@@ -69,7 +69,7 @@ class Normalizedvolume(NeuronModule):
 
         self.mixer = kwargs.get('mixer', 'default')
         self.level = kwargs.get('level', None)
-        self.action = kwargs.get('action', "set")  # can be set, raise or lower
+        self.action = kwargs.get('action', None)
         try:
             self.mute = bool(str(kwargs.get('mute', 'False')).capitalize())
         except ValueError:
@@ -77,17 +77,19 @@ class Normalizedvolume(NeuronModule):
 
         # check parameters
         if self._is_parameters_ok():
-            if self.action == "set":
+            if self.action == 'get':
+                logger.info("[Normalizedvolume] get volume for '{}': {}%".format(self.mixer, SoundManager.get_volume(self.mixer)))
+            if self.action == 'set':
                 logger.info("[Normalizedvolume] set volume for '{}' to: {}%".format(self.mixer, self.level))
                 SoundManager.set_volume(self.mixer, self.level)
-            if self.action == "raise":
+            if self.action == 'raise':
                 current_level = SoundManager.get_volume(self.mixer)
                 level_to_set = self.level + current_level
                 if level_to_set > 100:
                     level_to_set = 100
                 logger.info("[Normalizedvolume] set volume for '{}' to: {}%".format(self.mixer, level_to_set))
                 SoundManager.set_volume(self.mixer, level_to_set)
-            if self.action == "lower":
+            if self.action == 'lower':
                 current_level = SoundManager.get_volume(self.mixer)
                 level_to_set = current_level - self.level
                 if level_to_set < 0:
@@ -97,9 +99,9 @@ class Normalizedvolume(NeuronModule):
 
             if self.mute is False:
                 message = {
-                    "asked_level": self.level,
-                    "asked_action": self.action,
-                    "current_level": SoundManager.get_volume(self.mixer)
+                    'asked_level': self.level,
+                    'asked_action': self.action,
+                    'current_level': SoundManager.get_volume(self.mixer)
                 }
                 self.say(message)
 
@@ -108,15 +110,17 @@ class Normalizedvolume(NeuronModule):
         self.mixer = SoundManager.resolve_mixer(mixer_name)
         if self.mixer is None:
             raise InvalidParameterException("[Normalizedvolume] non-existant mixer '{}'".format(mixer_name))
-        if self.level is None:
-            raise InvalidParameterException("[Normalizedvolume] level need to be set")
+        if self.action is None:
+            raise InvalidParameterException("[Normalizedvolume] action needs to be set")
+        if self.action not in ["get", "set", "raise", "lower"]:
+            raise InvalidParameterException("[Normalizedvolume] action can be 'get', 'set', 'raise' or 'lower'")
+        if self.action != 'get' and self.level is None:
+            raise InvalidParameterException("[Normalizedvolume] level needs to be set (except for 'get')")
         try:
             self.level = int(self.level)
         except ValueError:
             raise InvalidParameterException("[Normalizedvolume] level '{}' is not a valid integer".format(self.level))
         if self.level < 0 or self.level > 100:
-            raise InvalidParameterException("[Normalizedvolume] level need to be placed between 0 and 100")
-        if self.action not in ["set", "raise", "lower"]:
-            raise InvalidParameterException("[Normalizedvolume] action can be 'set', 'raise' or 'lower'")
+            raise InvalidParameterException("[Normalizedvolume] level needs to be placed between 0 and 100")
         return True
 
