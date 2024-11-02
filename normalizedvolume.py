@@ -78,23 +78,23 @@ class Normalizedvolume(NeuronModule):
         # check parameters
         if self._is_parameters_ok():
             if self.action == 'get':
-                logger.info("[Normalizedvolume] get volume for '{}': {}%".format(self.mixer, SoundManager.get_volume(self.mixer)))
+                logger.info("[neuron:normalizedvolume] get volume for '{}': {}%".format(self.mixer, SoundManager.get_volume(self.mixer)))
             if self.action == 'set':
-                logger.info("[Normalizedvolume] set volume for '{}' to: {}%".format(self.mixer, self.level))
+                logger.info("[neuron:normalizedvolume] set volume for '{}' to: {}%".format(self.mixer, self.level))
                 SoundManager.set_volume(self.mixer, self.level)
             if self.action == 'raise':
                 current_level = SoundManager.get_volume(self.mixer)
                 level_to_set = self.level + current_level
                 if level_to_set > 100:
                     level_to_set = 100
-                logger.info("[Normalizedvolume] set volume for '{}' to: {}%".format(self.mixer, level_to_set))
+                logger.info("[neuron:normalizedvolume] set volume for '{}' to: {}%".format(self.mixer, level_to_set))
                 SoundManager.set_volume(self.mixer, level_to_set)
             if self.action == 'lower':
                 current_level = SoundManager.get_volume(self.mixer)
                 level_to_set = current_level - self.level
                 if level_to_set < 0:
                     level_to_set = 0
-                logger.info("[Normalizedvolume] set volume to: {}%".format(level_to_set))
+                logger.info("[neuron:normalizedvolume] set volume to: {}%".format(level_to_set))
                 SoundManager.set_volume(self.mixer, level_to_set)
 
             if self.mute is False:
@@ -109,18 +109,18 @@ class Normalizedvolume(NeuronModule):
         mixer_name = self.mixer
         self.mixer = SoundManager.resolve_mixer(mixer_name)
         if self.mixer is None:
-            raise InvalidParameterException("[Normalizedvolume] non-existant mixer '{}'".format(mixer_name))
+            raise InvalidParameterException("[neuron:normalizedvolume] non-existant mixer '{}'".format(mixer_name))
         if self.action is None:
-            raise InvalidParameterException("[Normalizedvolume] action needs to be set")
+            raise InvalidParameterException("[neuron:normalizedvolume] action needs to be set")
         if self.action not in ["get", "set", "raise", "lower"]:
-            raise InvalidParameterException("[Normalizedvolume] action can be 'get', 'set', 'raise' or 'lower'")
+            raise InvalidParameterException("[neuron:normalizedvolume] action can be 'get', 'set', 'raise' or 'lower'")
         if self.action != 'get' and self.level is None:
-            raise InvalidParameterException("[Normalizedvolume] level needs to be set (except for 'get')")
+            raise InvalidParameterException("[neuron:normalizedvolume] level needs to be set (except for 'get')")
         try:
             self.level = int(self.level)
         except ValueError:
-            raise InvalidParameterException("[Normalizedvolume] level '{}' is not a valid integer".format(self.level))
+            raise InvalidParameterException("[neuron:normalizedvolume] level '{}' is not a valid integer".format(self.level))
         if self.level < 0 or self.level > 100:
-            raise InvalidParameterException("[Normalizedvolume] level needs to be placed between 0 and 100")
+            raise InvalidParameterException("[neuron:normalizedvolume] level needs to be placed between 0 and 100")
         return True
 
